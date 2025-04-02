@@ -17,7 +17,7 @@ mongoose.connect(config.mongoUri, {
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to User application." });
 });
-
+app.get("/ip", (req, res) => res.send(req.ip));
 // Start the serverhow
 app.listen(config.port, (err) => {
     if (err) {
