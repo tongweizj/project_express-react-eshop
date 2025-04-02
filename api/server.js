@@ -17,7 +17,10 @@ mongoose.connect(config.mongoUri, {
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to User application." });
 });
-app.get("/ip", (req, res) => res.send(req.ip));
+app.get("/ip", (req, res) => {
+    const clientIP = req.headers['x-forwarded-for'] || req.ip;
+    res.send(`Vercel Server出口IP: ${clientIP}`);
+  });
 // Start the serverhow
 app.listen(config.port, (err) => {
     if (err) {
