@@ -30,9 +30,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "concurrently 'vite' \"nodemon server.js\"",
-    "build": "vite build",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "name": "mongo-example",
   "version": "1.0.0",
