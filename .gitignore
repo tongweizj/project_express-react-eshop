@@ -49,3 +49,5 @@ Thumbs.db
 *.wmv
 
 config/config.js.max
+aws-ec2-key.pem
+api/package-lock.json
