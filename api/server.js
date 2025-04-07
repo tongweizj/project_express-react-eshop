@@ -1,9 +1,11 @@
 import config from './config/config.js';
+import dotenv from 'dotenv';
+dotenv.config();
 import app from './server/express.js';
 import mongoose from 'mongoose';  // Import mongoose for MongoDB connection
 
 // Connect to MongoDB using the URI from the config file
-mongoose.connect(config.mongoUri, {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => {
