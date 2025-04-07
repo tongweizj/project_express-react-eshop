@@ -51,3 +51,5 @@ Thumbs.db
 config/config.js.max
 aws-ec2-key.pem
 api/package-lock.json
+api/.env
+api/.env
