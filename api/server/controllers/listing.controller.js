@@ -5,7 +5,7 @@ import errorHandler from './error.controller.js';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(process.cwd(), 'public/images/listings'));
+        cb(null, path.join(process.cwd(), '../client/public/images/listings'));
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname);
