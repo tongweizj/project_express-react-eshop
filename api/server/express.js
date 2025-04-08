@@ -12,6 +12,7 @@ import ratingRoutes from './routes/rating.routes.js'
 import path from 'path'
 
 const app = express()
+app.use(cors())
 const CURRENT_WORKING_DIR = process.cwd()
 app.use("/uploads", express.static(path.join(CURRENT_WORKING_DIR, "../../server/uploads")));
 
@@ -28,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(compress())
 app.use(helmet())
-app.use(cors())
+
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
         res.status(401).json({"error" : err.name + ": " + err.message})
