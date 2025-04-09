@@ -11,6 +11,7 @@
   bottom: 0;
   margin-top: auto; /* Empurra o footer para o final */
 }
+
 html, body {
   height: 100%;
   margin: 0;
@@ -46,6 +47,7 @@ html, body {
   
   .logout-button:hover {
     color: #e82790;
+    transform: scale(1.2);
   }
   
   .footer-section h4 {
@@ -59,6 +61,9 @@ html, body {
   .footer-section ul {
     list-style: none;
     padding: 0;
+  }
+  .footer-section:hover{
+    transform: scale(1.2);
   }
   
   .footer-section ul li {
@@ -74,4 +79,5 @@ html, body {
   
   .footer-section ul li a:hover {
     color: #e82790;
+    transform: scale(1.2);
   }
