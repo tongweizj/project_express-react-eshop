@@ -3,6 +3,7 @@ import { CircularProgress, Grid, Typography } from "@mui/material";
 import ListingCard from "../ListingCard/ListingCard.jsx";
 import { list } from "../../frontend-ctrl/api-listing.js";
 import { useAuth } from "../../helpers/auth-context.jsx";
+import "./MyListings.css";
 
 const MyListings = () => {
   const { isAuthenticated } = useAuth();
@@ -52,19 +53,29 @@ const MyListings = () => {
   };
 
   return (
-    <div className="listing-list-container">
+    <div
+      className="listing-list-container"
+      style={{ minHeight: "80vh", padding: "1rem" }}
+    >
       {loading ? (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
           <CircularProgress />
         </div>
       ) : listings.length > 0 ? (
         <>
-
-          <Typography variant="h4" component="div" fontWeight="bold" textAlign={'center'}>My Listings</Typography>
+          <Typography
+            variant="h4"
+            component="div"
+            fontWeight="bold"
+            textAlign="center"
+          >
+            My Listings
+          </Typography>
           <Grid container justifyContent="center" alignItems="center">
             {listings.map((listing) => (
               <Grid item xs={12} sm={6} md={4} sx={{ mb: -3, ml: -3 }} key={listing._id}>
-                <ListingCard listing={listing}
+                <ListingCard
+                  listing={listing}
                   onDeleteSuccess={() => handleListingDeleted(listing._id)}
                 />
               </Grid>

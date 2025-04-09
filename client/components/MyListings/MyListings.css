@@ -1,0 +1,6 @@
+.listing-list-container {
+    padding: 1rem;
+    max-width: 1200px;
+    margin: auto;
+    min-height: 80vh; /* Garante que o container ocupe pelo menos 80% da altura da viewport */
+}

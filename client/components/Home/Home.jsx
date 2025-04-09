@@ -4,6 +4,8 @@ import ListingCard from "../ListingCard/ListingCard";
 import { list } from "../../frontend-ctrl/api-listing";
 import logo from "../../assets/logo.png";
 import "./Home.css";
+import hero from "../../assets/Hero.png";
+
 
 const Home = () => {
   const [listings, setListings] = useState([]); // State to hold listings
@@ -38,54 +40,53 @@ const Home = () => {
   }, []);
 
   return (
-      <div className="listing-list-container">
-        {/* Logo and Title */}
-        <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ padding: 2 }}
-        >
-          <img
-              src={logo}
-              alt="CanTrade Logo"
-              style={{ width: "50px", height: "50px", marginRight: "10px" }}
-          />
-          <Typography variant="h4" component="div" fontWeight="bold">
-            CanTrade
-          </Typography>
-        </Box>
+    <>
+      {/* Hero Banner: 100% */}
+      <Box
+  sx={{
+    width: "100%",
+    height: "300px", 
+    overflow: "hidden",
+    margin: 0,
+    padding: 0,
+  }}
+>
+  <img
+    src={hero}
+    alt="Hero Banner"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      display: "block",
+    }}
+  />
+</Box>
 
-        {/* Listings or Loading Spinner */}
+  
+      {/*  */}
+      <div className="listing-list-container">
         {loading ? (
-            <div
-                style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}
-            >
-              <CircularProgress />
-            </div>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
+            <CircularProgress />
+          </div>
         ) : listings.length > 0 ? (
-            <Grid container justifyContent="center" alignItems="center">
-              {listings.map((listing) => (
-                  <Grid
-                      item
-                      xs={12}
-                      sm={6}
-                      md={4}
-                      sx={{ mb: 3 }}
-                      key={listing._id}
-                  >
-                    {/* Pass listing to ListingCard */}
-                    <ListingCard listing={listing} />
-                  </Grid>
-              ))}
-            </Grid>
+          <Grid container justifyContent="center" alignItems="center">
+            {listings.map((listing) => (
+              <Grid item xs={12} sm={6} md={4} sx={{ mb: 3 }} key={listing._id}>
+                <ListingCard listing={listing} />
+              </Grid>
+            ))}
+          </Grid>
         ) : (
-            <Typography variant="h6" color="textSecondary" align="center">
-              No listings available at the moment.
-            </Typography>
+          <Typography variant="h6" color="textSecondary" align="center">
+            No listings available at the moment.
+          </Typography>
         )}
       </div>
+    </>
   );
+  
 };
 
 export default Home;
