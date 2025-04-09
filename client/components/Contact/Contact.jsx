@@ -125,7 +125,7 @@ const Contact = () => {
               alt="SouthMarket Logo"
               sx={{
                 width: "100%",
-                maxWidth: { xs: 150, sm: 200, md: 250 }, // Valores responsivos
+                maxWidth: { xs: 150, sm: 200, md: 450 }, // Valores responsivos
                 height: "auto",
                 objectFit: "contain",
                 margin: { xs: "0 auto", md: "initial" }

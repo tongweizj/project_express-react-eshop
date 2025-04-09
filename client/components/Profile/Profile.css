@@ -1,10 +1,10 @@
 .profile-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 5em;
-  }
-
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 80vh; /* Adicionado para empurrar o footer */
+  padding: 5em 0;
+}
   .profile-card {
     width: 400px;
     padding: 0 6px;

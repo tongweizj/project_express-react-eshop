@@ -82,7 +82,14 @@ const Cart = () => {
   }
 
   return (
-    <Box sx={{ margin: "0 auto", padding: "2rem", maxWidth: "1200px" }}>
+    <Box
+      sx={{
+        margin: "0 auto",
+        padding: "2rem",
+        maxWidth: "1200px",
+        minHeight: "80vh" // Adicionado para empurrar o footer para baixo
+      }}
+    >
       {/* Modal de Alerta de Compra Completa */}
       {showAlert && (
         <Dialog
