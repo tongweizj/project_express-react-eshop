@@ -15,7 +15,10 @@ import Contact from './components/Contact/Contact.jsx';
 import Privacy from './components/Privacy/Privacy.jsx';
 import Favourites from './components/Favourites/Favourites.jsx';
 import EditListing from './components/EditListing/EditListing.jsx';
- 
+import Services from './components/Sertvices/Services.jsx'; 
+import FAQ from './components/Faq/Faq.jsx';
+import HelpCenter from './components/Help/Help.jsx';
+
 const MainRouter = () => {
     return (
         <div>
@@ -24,18 +27,20 @@ const MainRouter = () => {
                 <Route exact path="/" element={<Home />} />
                 <Route exact path="/signup" element={<Signup />} />
                 <Route exact path="/signin" element={<Signin />} />
-                <Route exact path='*' element={<NotFound/>}/>
+                <Route exact path="*" element={<NotFound />} />
                 <Route exact path="/profile" element={<Profile />} />
                 <Route exact path="/favorites" element={<Favorites />} />
                 <Route exact path="/newListing" element={<NewListing />} />
                 <Route exact path="/cart" element={<Cart />} />
                 <Route exact path="/myListings" element={<MyListings />} />
                 <Route exact path="/about" element={<About />} />
-                <Route exact path="/contact" element={<Contact  />} />
+                <Route exact path="/contact" element={<Contact />} />
                 <Route exact path="/privacy" element={<Privacy />} />
                 <Route exact path="/favourites" element={<Favourites />} />
                 <Route path="/listings/edit/:listingId" element={<EditListing />} />
-
+                <Route exact path="/services" element={<Services />} /> 
+                <Route exact path="/faq" element={<FAQ />} />
+                <Route exact path="/help" element={<HelpCenter />} />
             </Routes>
             <Footer />
         </div>
