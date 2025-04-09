@@ -137,29 +137,8 @@ const Profile = () => {
                     {isEditing ? null : <DeleteProfile userId={user._id} />}
                 </CardContent>
 
-                {/* Floating Action Buttons */}
-                <div className="profile-actions">
-                    <Tooltip title="Add Listing" arrow>
-                        <Fab
-                            color="primary"
-                            aria-label="add"
-                            onClick={() => navigate("/newListing")}
-                            className="fab-button addListing"
-                        >
-                            <AddIcon />
-                        </Fab>
-                    </Tooltip>
-                    <Tooltip title="My Listings" arrow>
-                        <Fab
-                            color="secondary"
-                            aria-label="view"
-                            onClick={() => navigate("/myListings")}
-                            className="fab-button viewListings"
-                        >
-                            <VisibilityIcon />
-                        </Fab>
-                    </Tooltip>
-                </div>
+              
+              
 
                 {isEditing && <EditProfile user={user} />}
             </Card>

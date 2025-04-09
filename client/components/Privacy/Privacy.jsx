@@ -110,7 +110,7 @@ const PrivacyPolicy = () => {
           If you have any questions about this privacy policy, please contact us at:
         </Typography>
         <Typography variant="body1" paragraph className="privacy-policy-text">
-          Email: <a href="mailto:cantrade@ctrade.ca">cantrade@gmail.com</a>
+          Email: <a href="mailto:cantrade@ctrade.ca">SouthMarket@gmail.com</a>
         </Typography>
       </Box>
     </Container>
