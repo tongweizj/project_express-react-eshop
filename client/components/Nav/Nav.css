@@ -22,15 +22,18 @@ body {
 
 /* Navbar background set to white */
 .nav {
-    background-color: #ffffff;  /* Set background color to white */
-    color: #333;  /* Dark text color for contrast */
+    background-color: #120f3a;  /* Set background color to white */
+    color: #ffff;  /* Dark text color for contrast */
     border-bottom: 1px solid #ddd;  /* Subtle border at the bottom for separation */
     padding: 20px 20px;  /* Added padding for better spacing */
     display: flex;
     margin: 0;
     align-items: center;
 }
-
+.iconButton.addListing {
+    background: transparent !important;
+  }
+  
 /* Hide the menu expander for now (if using a responsive design) */
 .menuExpander {
     display: none;
@@ -40,13 +43,14 @@ body {
 .search {
     position: relative;
     border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.05);  /* Light background for the search bar */
+    background-color: white; /* Fundo branco */
     width: 100%;
     margin: 0 1em 0 4em;
     max-width: 300px;
     display: flex;
     align-items: center;
 }
+
 
 /* Search icon inside the search bar */
 .searchIcon {
@@ -57,17 +61,22 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #e82790;
 }
+
 
 /* Input field inside search bar */
 .inputBase {
-    color: #333;  /* Dark text for visibility */
+    color: black;  /* Texto preto para contraste com fundo branco */
     padding-left: calc(1em + 32px);
     width: 100%;
     height: 100%;
     border: none;
     outline: none;
     background: transparent;
+}
+.inputBase::placeholder {
+    color: #888; /* Cinza claro para o placeholder */
 }
 
 .navLink {
@@ -79,13 +88,14 @@ body {
 
 .navLink:hover,
 .navLink.active {
-    color: #0073e6;  /* Change text color on hover to blue */
+    color: #e82790;  /* Change text color on hover to blue */
     text-decoration: underline !important;  /* Underline text on hover */
     border-radius: 4px;
+    transform: scale(1.2);
 }
 
 .navLink.active {
-    color: #0073e6;
+    color: #52c4cf;
     text-decoration: underline;
 }
 
@@ -97,14 +107,29 @@ body {
   /* Hover effect for Profile icon */
   .iconButton.profile:hover {
     color: #1972e6;
+    transform: scale(1.2);
   }
   
   /* Hover effect for Favourites icon */
   .iconButton.favourites:hover {
     color: rgb(212, 22, 22);
+    transform: scale(1.2);
+  }
+
+  .addListing {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .addListing:hover {
+    transform: scale(1.2); /* Aumenta ligeiramente o botão */
+  }
+  
+  .addListing:hover svg {
+    color: #ffcc00; /* Muda a cor do ícone ao passar o mouse */
   }
   
   /* Hover effect for Cart icon */
   .iconButton.cart:hover {
-    color: rgb(230, 162, 26);
+    transform: scale(1.2);
+    color: #e82790;
   }

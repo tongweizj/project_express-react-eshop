@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, Container, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+    Box,
+    TextField,
+    Button,
+    Container,
+    Grid,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
+} from "@mui/material";
+import logo from '../../assets/SOUTHMARKET.png'; // Importando a logo
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -23,7 +35,7 @@ const Contact = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (formData.name === "" || formData.email === "" || formData.subject === "" || formData.message === "") {
+        if (!formData.name || !formData.email || !formData.subject || !formData.message) {
             setErrorOpen(true);
             return;
         }
@@ -38,103 +50,90 @@ const Contact = () => {
         setDialogOpen(true);
     };
 
-    const handleCloseDialog = () => {
-        setDialogOpen(false); // Close the dialog
-    };
-
-    const handleCloseError = () => {
-        setErrorOpen(false); // Close the dialog
-    };
+    const handleCloseDialog = () => setDialogOpen(false);
+    const handleCloseError = () => setErrorOpen(false);
 
     return (
-        <Container maxWidth="sm" sx={{ py: 6 }} style={{height: 'auto'}}>
-            <Box sx={{ textAlign: "center", mb: 4 }}>
-                <Typography variant="h4" gutterBottom fontWeight={'bold'}>
-                    Contact Us
-                </Typography>
-                <Typography variant="h6" color="textSecondary">
-                    We'd love to hear from you. Fill out the form below to get in touch.
-                </Typography>
-            </Box>
+        <Box display="flex" flexDirection="column" minHeight="100vh">
+            {/* Main Content */}
+            <Container 
+                maxWidth="md" 
+                sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center", py: 4 }}
+            >
+                <Grid container spacing={2} alignItems="center">
+                    {/* Form Section */}
+                    <Grid item xs={12} md={8}>
+                        <Box component="form" onSubmit={handleSubmit} noValidate>
+                            <TextField
+                                fullWidth
+                                label="Name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="Email"
+                                name="email"
+                                type="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="Subject"
+                                name="subject"
+                                value={formData.subject}
+                                onChange={handleChange}
+                                required
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="Message"
+                                name="message"
+                                multiline
+                                rows={4}
+                                value={formData.message}
+                                onChange={handleChange}
+                                required
+                                margin="normal"
+                            />
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-                <Grid container spacing={2}>
-                    {/* Name Field */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                        />
+                            {/* Submit Button */}
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                sx={{ mt: 2 }}
+                            >
+                                Submit
+                            </Button>
+                        </Box>
                     </Grid>
 
-                    {/* Email Field */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </Grid>
-
-                    {/* Subject Field */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Subject"
-                            name="subject"
-                            value={formData.subject}
-                            onChange={handleChange}
-                            required
-                        />
-                    </Grid>
-
-                    {/* Message Field */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Message"
-                            name="message"
-                            multiline
-                            rows={4}
-                            value={formData.message}
-                            onChange={handleChange}
-                            required
+                    {/* Logo Section */}
+                    <Grid item xs={12} md={4} display="flex" justifyContent="center">
+                        <Box 
+                            component="img"
+                            src={logo}
+                            alt="SouthMarket Logo"
+                            sx={{ width: "100%", maxWidth: 200 }}
                         />
                     </Grid>
                 </Grid>
-
-                {/* Submit Button */}
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    sx={{ mt: 3 }}
-                >
-                    Submit
-                </Button>
-            </Box>
+            </Container>
 
             {/* Thank You Dialog */}
-            <Dialog
-                open={dialogOpen}
-                onClose={handleCloseDialog}
-                aria-labelledby="thank-you-dialog-title"
-                aria-describedby="thank-you-dialog-description"
-            >
-                <DialogTitle id="thank-you-dialog-title">
-                    Thank You!
-                </DialogTitle>
+            <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+                <DialogTitle>Thank You!</DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="thank-you-dialog-description">
+                    <DialogContentText>
                         Thanks for getting in touch. We'll get back to you as soon as possible!
                     </DialogContentText>
                 </DialogContent>
@@ -145,17 +144,11 @@ const Contact = () => {
                 </DialogActions>
             </Dialog>
 
-            <Dialog
-                open={errorOpen}
-                onClose={handleCloseError}
-                aria-labelledby="error-dialog-title"
-                aria-describedby="error-dialog-description"
-            >
-                <DialogTitle id="error-dialog-title">
-                    Error
-                </DialogTitle>
+            {/* Error Dialog */}
+            <Dialog open={errorOpen} onClose={handleCloseError}>
+                <DialogTitle>Error</DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="thank-you-dialog-description">
+                    <DialogContentText>
                         Please fill out all fields before submitting the form.
                     </DialogContentText>
                 </DialogContent>
@@ -165,7 +158,7 @@ const Contact = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </Container>
+        </Box>
     );
 };
 
