@@ -9,7 +9,7 @@ router.route('/api/listings')
 
 router.route('/api/listings/:listingId')
     .get(read)
-    .put(update)
+    .put(upload.single('image'), update)
     .delete(remove);
 
 router.param('listingId', listingByID);
