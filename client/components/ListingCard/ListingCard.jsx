@@ -184,7 +184,7 @@ const ListingCard = ({ listing }) => {
                     <Fab
                         color="primary"
                         size="small"
-                        onClick={() => navigate(`/listings/edit/${listing.id}`)}
+                        onClick={() => navigate(`/listings/edit/${listing._id}`)}
                         aria-label="Edit Listing"
                         sx={{ marginRight: 2 }}
                     >
