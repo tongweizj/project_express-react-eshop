@@ -22,6 +22,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "./ListingCard.css";
+import config from '../../config.js';
 
 const ListingCard = ({ listing }) => {
   const navigate = useNavigate();
@@ -99,7 +100,7 @@ const ListingCard = ({ listing }) => {
               <CardMedia
                   component="img"
                   height="140"
-                  image={listing.images[0]} // Display the first image in the array
+                  image={`${config.IMAGE_BASE_URL}/${listing.images[0]}`} // Display the first image in the array
                   alt={listing.title || "Listing image"}
                   className="listing-image"
               />
@@ -183,7 +184,7 @@ const ListingCard = ({ listing }) => {
                     <Fab
                         color="primary"
                         size="small"
-                        onClick={() => navigate(`/listings/edit/${listing.id}`)}
+                        onClick={() => navigate(`/listings/edit/${listing._id}`)}
                         aria-label="Edit Listing"
                         sx={{ marginRight: 2 }}
                     >
