@@ -175,7 +175,7 @@ const ListingCard = ({ listing }) => {
                   </Tooltip>
                 </Box>
             )}
-
+          
             {/* Private buttons */}
             {isAuthenticated && showPrivateButtons && (
                 <Box className="fab-container">

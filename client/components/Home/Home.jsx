@@ -41,11 +41,11 @@ const Home = () => {
 
   return (
     <>
-      {/* Hero Banner: 100% da tela e colado com o topo */}
+      {/* Hero Banner: 100% */}
       <Box
   sx={{
     width: "100vw",
-    height: "300px", // <- aqui está o segredo
+    height: "300px", 
     overflow: "hidden",
     margin: 0,
     padding: 0,
@@ -64,7 +64,7 @@ const Home = () => {
 </Box>
 
   
-      {/* Conteúdo principal */}
+      {/*  */}
       <div className="listing-list-container">
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>

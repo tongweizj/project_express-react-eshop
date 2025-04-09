@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000;
+  background-color: #120f3a;
   color: #fff;
   padding: 2rem;
   width: 100%;
@@ -45,7 +45,7 @@ html, body {
   }
   
   .logout-button:hover {
-    color: #dedede;
+    color: #e82790;
   }
   
   .footer-section h4 {
@@ -73,5 +73,5 @@ html, body {
   }
   
   .footer-section ul li a:hover {
-    color: #dedede;
+    color: #e82790;
   }
