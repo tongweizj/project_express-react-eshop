@@ -217,7 +217,7 @@ const ListingCard = ({ listing }) => {
               >
                 {listing.images && listing.images.length > 0 && (
                     <img
-                        src={listing.images[0]}
+                        src={`${config.IMAGE_BASE_URL}/${listing.images[0]}`}
                         alt={listing.title}
                         className="modal-image"
                     />

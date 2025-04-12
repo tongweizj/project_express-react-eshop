@@ -17,7 +17,7 @@ import {
 import { useAuth } from "../../helpers/auth-context";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import { useCart } from "../../helpers/CartContext.jsx";
-
+import config from '../../config.js';
 const Cart = () => {
   const { isAuthenticated } = useAuth();
   const {
@@ -149,7 +149,7 @@ const Cart = () => {
                   <Grid item xs={12} sm={3}>
                     <Box sx={{ textAlign: "center" }}>
                       <img
-                        src={item.images[0]}
+                        src={`${config.IMAGE_BASE_URL}/${item.images[0]}`}
                         alt={item.name}
                         style={{
                           width: "100%",
