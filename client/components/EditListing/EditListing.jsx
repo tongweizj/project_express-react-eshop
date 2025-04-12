@@ -102,7 +102,7 @@ const EditListing = () => {
     setError("");
 
     if (!isAuthenticated) {
-      setError("Usuário não autenticado.");
+      setError("Unauthenticated user.");
       return;
     }
     const { user, token } = isAuthenticated;
@@ -160,17 +160,17 @@ const EditListing = () => {
   return (
     <Box sx={{ maxWidth: "600px", margin: "0 auto", p: 2 }}>
       <Typography variant="h4" gutterBottom>
-        Editar Listagem
+      Edit Listing
       </Typography>
       {error && <Typography color="error">{error}</Typography>}
       {success && (
-        <Typography color="primary">Atualizado com sucesso!</Typography>
+        <Typography color="primary">Updated successfully!</Typography>
       )}
       <Box component="form" onSubmit={handleSubmit} noValidate>
         {/* Exibe a imagem atual se houver */}
         {listing.image && listing.image.length > 0 && (
           <Box sx={{ my: 2 }}>
-            <Typography variant="subtitle1">Imagem atual:</Typography>
+            <Typography variant="subtitle1">Current Image:</Typography>
             <img
               src={`/${listing.image[0].replace("public/", "")}`}
               alt="Imagem atual"
@@ -193,7 +193,7 @@ const EditListing = () => {
 
         {/* Título */}
         <TextField
-          label="Título"
+          label="Title"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -202,9 +202,9 @@ const EditListing = () => {
           required
         />
 
-        {/* Descrição */}
+        {/* Description */}
         <TextField
-          label="Descrição"
+          label="Description"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -217,7 +217,7 @@ const EditListing = () => {
 
         {/* Preço */}
         <TextField
-          label="Preço"
+          label="Price"
           type="number"
           variant="outlined"
           fullWidth
@@ -229,7 +229,7 @@ const EditListing = () => {
 
         {/* Categoria */}
         <FormControl fullWidth margin="normal">
-          <InputLabel id="category-label">Categoria</InputLabel>
+          <InputLabel id="category-label">Category</InputLabel>
           <Select
             labelId="category-label"
             value={listing.category}
@@ -237,7 +237,7 @@ const EditListing = () => {
             required
           >
             <MenuItem value="">
-              <em>Selecione uma categoria</em>
+              <em>Select a category</em>
             </MenuItem>
             {categories.map((cat) => (
               <MenuItem key={cat._id} value={cat._id}>
@@ -249,7 +249,7 @@ const EditListing = () => {
 
         {/* Localização */}
         <TextField
-          label="Endereço"
+          label="Address"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -258,7 +258,7 @@ const EditListing = () => {
           required
         />
         <TextField
-          label="Cidade"
+          label="City"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -267,7 +267,7 @@ const EditListing = () => {
           required
         />
         <TextField
-          label="Província"
+          label="Province"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -276,7 +276,7 @@ const EditListing = () => {
           required
         />
         <TextField
-          label="CEP"
+          label="Postal Code"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -285,9 +285,9 @@ const EditListing = () => {
           required
         />
 
-        {/* Condição */}
+        {/* Condition */}
         <FormControl fullWidth margin="normal">
-          <InputLabel id="condition-label">Condição</InputLabel>
+          <InputLabel id="condition-label">Condition</InputLabel>
           <Select
             labelId="condition-label"
             value={listing.condition}
@@ -295,16 +295,16 @@ const EditListing = () => {
             required
           >
             <MenuItem value="">
-              <em>Selecione uma condição</em>
+              <em>Select a condition</em>
             </MenuItem>
-            <MenuItem value="New">Novo</MenuItem>
-            <MenuItem value="Used">Usado</MenuItem>
+            <MenuItem value="New">New</MenuItem>
+            <MenuItem value="Used">Used</MenuItem>
           </Select>
         </FormControl>
 
         {/* Botão de submit */}
         <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
-          Atualizar Listagem
+        Update Listing
         </Button>
       </Box>
     </Box>
