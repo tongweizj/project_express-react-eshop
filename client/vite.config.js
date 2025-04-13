@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       // porta do Vite (dev server)
-      port: 5174,
+      port: 5173,
 
       // todas as chamadas para /api e /auth serão redirecionadas para o seu back
       proxy: {
