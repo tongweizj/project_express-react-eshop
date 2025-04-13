@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../helpers/auth-context.jsx";
 import { create } from "../../frontend-ctrl/api-listing.js";
 import { list } from "../../frontend-ctrl/api-category.js";
+import { useNavigate } from "react-router-dom";
+
 import {
     TextField,
     Button,
@@ -15,6 +17,8 @@ import {
 
 const NewListing = () => {
     const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
     const [categories, setCategories] = useState([]);
 
 
@@ -63,12 +67,23 @@ const NewListing = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+    
         if (isAuthenticated) {
-            if (!listing.title || !listing.description || !listing.price || !listing.category || !listing.condition) {
+            if (
+                !listing.title ||
+                !listing.description ||
+                !listing.price ||
+                !listing.category ||
+                !listing.condition ||
+                !listing.location.address ||
+                !listing.location.city ||
+                !listing.location.province ||
+                !listing.location.postalCode
+            ) {
+                alert("Please fill in all required fields before submitting the listing.");
                 return;
             }
-
+    
             try {
                 const formData = new FormData();
                 Object.entries(listing).forEach(([key, value]) => {
@@ -77,16 +92,19 @@ const NewListing = () => {
                             formData.append(`location[${locKey}]`, locValue)
                         );
                     } else if (key === "imageFile") {
-                        formData.append("image", value); // Add the image file
+                        formData.append("image", value);
                     } else {
                         formData.append(key, value);
                     }
                 });
-
+    
                 console.log("FormData object:", formData);
-
-                const response = await create(formData); // Send FormData
+    
+                const response = await create(formData);
                 console.log("Listing created:", response);
+    
+                // Redirect to home
+                navigate("/");
             } catch (err) {
                 console.error("Error creating listing:", err);
             }
@@ -94,6 +112,7 @@ const NewListing = () => {
             console.log("User not authenticated");
         }
     };
+    
 
     return (
         <Box sx={{ maxWidth: "600px", margin: "0 auto", padding: "2rem" }}>

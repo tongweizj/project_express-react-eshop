@@ -153,27 +153,34 @@ const ListingCard = ({ listing }) => {
             {/* Public buttons */}
             {isAuthenticated && showPublicButtons && showButtons && (
                 <Box className="fab-container">
-                  <Tooltip title="Add to Cart" arrow>
+                 <Tooltip title="Add to Cart" arrow>
                     <Fab
-                        color="primary"
-                        size="small"
-                        onClick={handleAddToCart}
-                        aria-label="Add to Cart"
-                        sx={{ marginRight: 1 }}
+                      color="primary"
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation(); 
+                        handleAddToCart();
+                      }}
+                      aria-label="Add to Cart"
+                      sx={{ marginRight: 1 }}
                     >
                       <AddShoppingCartIcon />
                     </Fab>
                   </Tooltip>
                   <Tooltip title="Add to Favorites" arrow>
-                    <Fab
-                        color="secondary"
-                        size="small"
-                        onClick={handleAddToFavourites}
-                        aria-label="Add to Favorites"
-                    >
-                      <FavoriteIcon />
-                    </Fab>
-                  </Tooltip>
+                        <Fab
+                          color="secondary"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation(); 
+                            handleAddToFavourites();
+                          }}
+                          aria-label="Add to Favorites"
+                        >
+                          <FavoriteIcon />
+                        </Fab>
+                      </Tooltip>
+
                 </Box>
             )}
           

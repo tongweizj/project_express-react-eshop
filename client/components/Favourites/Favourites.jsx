@@ -1,7 +1,7 @@
 import { useFavourites } from "../../helpers/FavouritesContext";
 import ListingCard from "../ListingCard/ListingCard";
-import { Typography, Grid, Box } from "@mui/material";
-import "./Favourites.css"; // Certifique-se que o CSS esteja importado
+import { Typography, Grid, Box, Button } from "@mui/material";
+import "./Favourites.css"; 
 
 export default function Favourites() {
   const { favourites, removeFromFavourites } = useFavourites();
@@ -16,13 +16,29 @@ export default function Favourites() {
           You have no items in your favourites.
         </Typography>
       ) : (
-        <Grid container sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid container spacing={3} sx={{ display: 'flex', justifyContent: 'center' }}>
           {favourites.map((listing) => (
-            <Grid item xs={12} sm={6} md={4} sx={{ mb: -3, ml: -3 }} key={listing._id}>
-              <ListingCard
-                listing={listing}
-                onRemoveFromFavourites={() => removeFromFavourites(listing._id)}
-              />
+            <Grid item xs={12} sm={6} md={4} key={listing._id}>
+              <Box
+                sx={{
+                  position: "relative",
+                  border: "1px solid #ccc",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  padding: "16px",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <ListingCard listing={listing} />
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{ mt: 2, width: "100%" }}
+                  onClick={() => removeFromFavourites(listing._id)}
+                >
+                  Remove from Favourites
+                </Button>
+              </Box>
             </Grid>
           ))}
         </Grid>

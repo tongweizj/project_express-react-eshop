@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Typography, TextField, Button, Snackbar, Alert } from "@mui/material";
+import {
+  Card,
+  Typography,
+  TextField,
+  Button,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { signin } from "../../frontend-ctrl/api-auth.js";
 import { useAuth } from "../../helpers/auth-context";
+import { resetPassword } from "../../frontend-ctrl/api-user.js"; // Função criada
 import "./Signin.css";
 
 export default function Signin() {
@@ -25,7 +33,6 @@ export default function Signin() {
   };
 
   const isValidEmail = (email) => {
-    // Simple regex for email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -54,7 +61,7 @@ export default function Signin() {
         showSnackbar("error", data.error);
       } else {
         login(data, () => {
-          navigate("/");          
+          navigate("/");
           setTimeout(() => {
             window.location.reload();
           }, 1000);
@@ -63,13 +70,26 @@ export default function Signin() {
     });
   };
 
+  const handleResetPassword = () => {
+    if (!isValidEmail(values.email)) {
+      showSnackbar("error", "Please enter a valid email to reset.");
+      return;
+    }
+
+    resetPassword(values.email).then((data) => {
+      if (data && data.error) {
+        showSnackbar("error", data.error);
+      } else {
+        showSnackbar("success", "Password has been reset to 123456789.");
+      }
+    });
+  };
+
   return (
     <div className="signin-container">
       <Card className="signin-card">
-        {/* Left Section: Illustration */}
         <div className="signin-left"></div>
 
-        {/* Right Section: Form */}
         <div className="signin-right">
           <Typography variant="h4" className="signin-title" fontWeight={"bold"}>
             Welcome Back
@@ -101,13 +121,23 @@ export default function Signin() {
           >
             Log In
           </Button>
+
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleResetPassword}
+            fullWidth
+            style={{ marginTop: "10px" }}
+          >
+            Reset Password
+          </Button>
+
           <Typography variant="body2" className="signin-footer">
             Don't have an account? <Link to="/signup">Sign up</Link>
           </Typography>
         </div>
       </Card>
 
-      {/* Snackbar Component */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}

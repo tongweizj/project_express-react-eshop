@@ -25,6 +25,25 @@ const list = async (signal) => {
         console.log(err)
     }
 }
+const resetPassword = async (email) => {
+    try {
+      const response = await fetch("/auth/reset-password", {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
+  export { resetPassword };
+  
+  
 
 const read = async (params, credentials, signal) => {
     try {

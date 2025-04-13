@@ -3,6 +3,7 @@ import Listing from '../models/listing.model.js';
 import extend from 'lodash/extend.js';
 import errorHandler from './error.controller.js';
 
+// Create a new user
 const create = async (req, res) => {
     try {
         // Check if the email already exists
@@ -25,6 +26,7 @@ const create = async (req, res) => {
     }
 };
 
+// Get list of all users
 const list = async (req, res) => {
     try {
         let users = await User.find().select('name email updated created');
@@ -36,6 +38,7 @@ const list = async (req, res) => {
     }
 };
 
+// Middleware to get user by ID
 const userByID = async (req, res, next, id) => {
     try {
         let user = await User.findById(id);
@@ -52,12 +55,14 @@ const userByID = async (req, res, next, id) => {
     }
 };
 
+// Read user info
 const read = (req, res) => {
     req.profile.hashed_password = undefined;
     req.profile.salt = undefined;
     return res.json(req.profile);
 };
 
+// Update user info
 const update = async (req, res) => {
     try {
         let user = req.profile;
@@ -74,6 +79,7 @@ const update = async (req, res) => {
     }
 };
 
+// Delete a user and their listings
 const remove = async (req, res) => {
     try {
         let user = req.profile;
@@ -89,6 +95,28 @@ const remove = async (req, res) => {
     }
 };
 
+// Reset password to a default value
+const resetPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        user.password = "123456789"; // Triggers the virtual field setter
+        user.updated = Date.now();
+        await user.save();
+
+        res.json({ message: "Password reset successfully to 123456789" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Could not reset password" });
+    }
+};
+
+// Delete all users and their listings
 const removeAll = async (req, res) => {
     try {
         const users = await User.find().select('_id');
@@ -107,4 +135,4 @@ const removeAll = async (req, res) => {
     }
 };
 
-export default { create, userByID, read, list, remove, update, removeAll };
+export default { create, userByID, read, list, remove, update, removeAll, resetPassword };

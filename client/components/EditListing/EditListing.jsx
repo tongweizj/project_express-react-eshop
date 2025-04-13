@@ -19,7 +19,6 @@ const EditListing = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  // Estado da listagem, similar ao NewListing, mas com campo "images" para armazenar a URL atual.
   const [listing, setListing] = useState({
     title: "",
     description: "",
@@ -37,7 +36,6 @@ const EditListing = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // Busca os dados existentes da listagem
   useEffect(() => {
     if (!listingId) return;
     const ac = new AbortController();
@@ -46,7 +44,6 @@ const EditListing = () => {
         if (data.error) {
           setError(data.error);
         } else {
-          // Certifique-se de que o backend esteja retornando o campo "images"
           setListing({
             title: data.title || "",
             description: data.description || "",
@@ -73,7 +70,6 @@ const EditListing = () => {
     return () => ac.abort();
   }, [listingId, isAuthenticated]);
 
-  // Busca as categorias para popular o select
   useEffect(() => {
     listCategories()
       .then((data) => {
@@ -83,7 +79,6 @@ const EditListing = () => {
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
-  // Atualiza o estado de acordo com os inputs
   const handleChange = (name) => (event) => {
     if (name === "imageFile") {
       setListing({ ...listing, imageFile: event.target.files[0] });
@@ -102,16 +97,15 @@ const EditListing = () => {
     setError("");
 
     if (!isAuthenticated) {
-      setError("Unauthenticated user.");
+      setError("User not authenticated.");
       return;
     }
     const { user, token } = isAuthenticated;
     let listingToSend;
 
-    // Se foi selecionada uma nova imagem, monta o FormData conforme no NewListing
     if (listing.imageFile) {
       const formData = new FormData();
-      formData.append("image", listing.imageFile); // Campo esperado pelo multer
+      formData.append("image", listing.imageFile);
       formData.append("title", listing.title);
       formData.append("description", listing.description);
       formData.append("price", listing.price);
@@ -125,7 +119,6 @@ const EditListing = () => {
       formData.append("location[postalCode]", listing.location.postalCode);
       listingToSend = formData;
     } else {
-      // Caso não haja nova imagem, envia os dados em JSON e o backend deverá manter a imagem atual
       listingToSend = {
         title: listing.title,
         description: listing.description,
@@ -153,27 +146,26 @@ const EditListing = () => {
       }
     } catch (err) {
       console.error("UPDATE error:", err);
-      setError("Ocorreu um erro ao atualizar a listagem.");
+      setError("An error occurred while updating the listing.");
     }
   };
 
   return (
     <Box sx={{ maxWidth: "600px", margin: "0 auto", p: 2 }}>
       <Typography variant="h4" gutterBottom>
-      Edit Listing
+        Edit Listing
       </Typography>
       {error && <Typography color="error">{error}</Typography>}
       {success && (
-        <Typography color="primary">Updated successfully!</Typography>
+        <Typography color="primary">Successfully updated!</Typography>
       )}
       <Box component="form" onSubmit={handleSubmit} noValidate>
-        {/* Exibe a imagem atual se houver */}
         {listing.image && listing.image.length > 0 && (
           <Box sx={{ my: 2 }}>
             <Typography variant="subtitle1">Current Image:</Typography>
             <img
               src={`/${listing.image[0].replace("public/", "")}`}
-              alt="Imagem atual"
+              alt="Current image"
               style={{
                 width: "100%",
                 maxHeight: 300,
@@ -183,7 +175,6 @@ const EditListing = () => {
             />
           </Box>
         )}
-        {/* Campo para upload de nova imagem */}
         <TextField
           type="file"
           fullWidth
@@ -191,7 +182,6 @@ const EditListing = () => {
           onChange={handleChange("imageFile")}
         />
 
-        {/* Título */}
         <TextField
           label="Title"
           variant="outlined"
@@ -202,7 +192,6 @@ const EditListing = () => {
           required
         />
 
-        {/* Description */}
         <TextField
           label="Description"
           variant="outlined"
@@ -215,7 +204,6 @@ const EditListing = () => {
           required
         />
 
-        {/* Preço */}
         <TextField
           label="Price"
           type="number"
@@ -227,7 +215,6 @@ const EditListing = () => {
           required
         />
 
-        {/* Categoria */}
         <FormControl fullWidth margin="normal">
           <InputLabel id="category-label">Category</InputLabel>
           <Select
@@ -247,7 +234,6 @@ const EditListing = () => {
           </Select>
         </FormControl>
 
-        {/* Localização */}
         <TextField
           label="Address"
           variant="outlined"
@@ -285,7 +271,6 @@ const EditListing = () => {
           required
         />
 
-        {/* Condition */}
         <FormControl fullWidth margin="normal">
           <InputLabel id="condition-label">Condition</InputLabel>
           <Select
@@ -302,9 +287,8 @@ const EditListing = () => {
           </Select>
         </FormControl>
 
-        {/* Botão de submit */}
         <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
-        Update Listing
+          Update Listing
         </Button>
       </Box>
     </Box>
