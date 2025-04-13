@@ -11,6 +11,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { useAuth } from "../../helpers/auth-context.jsx";
 
@@ -19,7 +21,6 @@ const EditListing = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  // Estado da listagem, similar ao NewListing, mas com campo "images" para armazenar a URL atual.
   const [listing, setListing] = useState({
     title: "",
     description: "",
@@ -34,19 +35,20 @@ const EditListing = () => {
   });
 
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
 
-  // Busca os dados existentes da listagem
+ 
   useEffect(() => {
     if (!listingId) return;
     const ac = new AbortController();
     read({ listingId }, {}, ac.signal)
       .then((data) => {
         if (data.error) {
-          setError(data.error);
+          setErrorMessage(data.error);
+          setErrorOpen(true);
         } else {
-          // Certifique-se de que o backend esteja retornando o campo "images"
           setListing({
             title: data.title || "",
             description: data.description || "",
@@ -69,21 +71,32 @@ const EditListing = () => {
           });
         }
       })
-      .catch((err) => console.error("Error reading listing:", err));
+      .catch((err) => {
+        console.error("Error reading listing:", err);
+        setErrorMessage("Error reading listing data.");
+        setErrorOpen(true);
+      });
     return () => ac.abort();
   }, [listingId, isAuthenticated]);
 
-  // Busca as categorias para popular o select
+
   useEffect(() => {
     listCategories()
       .then((data) => {
-        if (data.error) setError(data.error);
-        else setCategories(data);
+        if (data.error) {
+          setErrorMessage(data.error);
+          setErrorOpen(true);
+        } else {
+          setCategories(data);
+        }
       })
-      .catch((err) => console.error("Error fetching categories:", err));
+      .catch((err) => {
+        console.error("Error fetching categories:", err);
+        setErrorMessage("Error fetching categories.");
+        setErrorOpen(true);
+      });
   }, []);
 
-  // Atualiza o estado de acordo com os inputs
   const handleChange = (name) => (event) => {
     if (name === "imageFile") {
       setListing({ ...listing, imageFile: event.target.files[0] });
@@ -99,19 +112,37 @@ const EditListing = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
+    setErrorMessage("");
 
     if (!isAuthenticated) {
-      setError("Usuário não autenticado.");
+      setErrorMessage("User not authenticated.");
+      setErrorOpen(true);
       return;
     }
+
+    
+    if (
+      !listing.title ||
+      !listing.description ||
+      !listing.price ||
+      !listing.category ||
+      !listing.condition ||
+      !listing.location.address ||
+      !listing.location.city ||
+      !listing.location.province ||
+      !listing.location.postalCode
+    ) {
+      setErrorMessage("Please fill in all required fields before submitting the listing.");
+      setErrorOpen(true);
+      return;
+    }
+
     const { user, token } = isAuthenticated;
     let listingToSend;
 
-    // Se foi selecionada uma nova imagem, monta o FormData conforme no NewListing
     if (listing.imageFile) {
       const formData = new FormData();
-      formData.append("image", listing.imageFile); // Campo esperado pelo multer
+      formData.append("image", listing.imageFile);
       formData.append("title", listing.title);
       formData.append("description", listing.description);
       formData.append("price", listing.price);
@@ -125,7 +156,6 @@ const EditListing = () => {
       formData.append("location[postalCode]", listing.location.postalCode);
       listingToSend = formData;
     } else {
-      // Caso não haja nova imagem, envia os dados em JSON e o backend deverá manter a imagem atual
       listingToSend = {
         title: listing.title,
         description: listing.description,
@@ -146,34 +176,34 @@ const EditListing = () => {
     try {
       const data = await update({ listingId }, { t: token }, listingToSend);
       if (data.error) {
-        setError(data.error);
+        setErrorMessage(data.error);
+        setErrorOpen(true);
       } else {
-        setSuccess(true);
-        setTimeout(() => navigate("/myListings"), 1000);
+        setSuccessOpen(true);
+        setTimeout(() => {
+          navigate("/myListings");
+        }, 1000);
       }
     } catch (err) {
       console.error("UPDATE error:", err);
-      setError("Ocorreu um erro ao atualizar a listagem.");
+      setErrorMessage("An error occurred while updating the listing.");
+      setErrorOpen(true);
     }
   };
 
   return (
     <Box sx={{ maxWidth: "600px", margin: "0 auto", p: 2 }}>
       <Typography variant="h4" gutterBottom>
-        Editar Listagem
+        Edit Listing
       </Typography>
-      {error && <Typography color="error">{error}</Typography>}
-      {success && (
-        <Typography color="primary">Atualizado com sucesso!</Typography>
-      )}
+
       <Box component="form" onSubmit={handleSubmit} noValidate>
-        {/* Exibe a imagem atual se houver */}
         {listing.image && listing.image.length > 0 && (
           <Box sx={{ my: 2 }}>
-            <Typography variant="subtitle1">Imagem atual:</Typography>
+            <Typography variant="subtitle1">Current Image:</Typography>
             <img
               src={`/${listing.image[0].replace("public/", "")}`}
-              alt="Imagem atual"
+              alt="Current image"
               style={{
                 width: "100%",
                 maxHeight: 300,
@@ -183,7 +213,7 @@ const EditListing = () => {
             />
           </Box>
         )}
-        {/* Campo para upload de nova imagem */}
+
         <TextField
           type="file"
           fullWidth
@@ -191,9 +221,8 @@ const EditListing = () => {
           onChange={handleChange("imageFile")}
         />
 
-        {/* Título */}
         <TextField
-          label="Título"
+          label="Title"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -202,9 +231,8 @@ const EditListing = () => {
           required
         />
 
-        {/* Descrição */}
         <TextField
-          label="Descrição"
+          label="Description"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -215,9 +243,8 @@ const EditListing = () => {
           required
         />
 
-        {/* Preço */}
         <TextField
-          label="Preço"
+          label="Price"
           type="number"
           variant="outlined"
           fullWidth
@@ -227,9 +254,8 @@ const EditListing = () => {
           required
         />
 
-        {/* Categoria */}
         <FormControl fullWidth margin="normal">
-          <InputLabel id="category-label">Categoria</InputLabel>
+          <InputLabel id="category-label">Category</InputLabel>
           <Select
             labelId="category-label"
             value={listing.category}
@@ -237,7 +263,7 @@ const EditListing = () => {
             required
           >
             <MenuItem value="">
-              <em>Selecione uma categoria</em>
+              <em>Select a category</em>
             </MenuItem>
             {categories.map((cat) => (
               <MenuItem key={cat._id} value={cat._id}>
@@ -247,9 +273,8 @@ const EditListing = () => {
           </Select>
         </FormControl>
 
-        {/* Localização */}
         <TextField
-          label="Endereço"
+          label="Address"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -258,7 +283,7 @@ const EditListing = () => {
           required
         />
         <TextField
-          label="Cidade"
+          label="City"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -267,7 +292,7 @@ const EditListing = () => {
           required
         />
         <TextField
-          label="Província"
+          label="Province"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -276,7 +301,7 @@ const EditListing = () => {
           required
         />
         <TextField
-          label="CEP"
+          label="Postal Code"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -285,9 +310,8 @@ const EditListing = () => {
           required
         />
 
-        {/* Condição */}
         <FormControl fullWidth margin="normal">
-          <InputLabel id="condition-label">Condição</InputLabel>
+          <InputLabel id="condition-label">Condition</InputLabel>
           <Select
             labelId="condition-label"
             value={listing.condition}
@@ -295,18 +319,51 @@ const EditListing = () => {
             required
           >
             <MenuItem value="">
-              <em>Selecione uma condição</em>
+              <em>Select a condition</em>
             </MenuItem>
-            <MenuItem value="New">Novo</MenuItem>
-            <MenuItem value="Used">Usado</MenuItem>
+            <MenuItem value="New">New</MenuItem>
+            <MenuItem value="Used">Used</MenuItem>
           </Select>
         </FormControl>
 
-        {/* Botão de submit */}
         <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
-          Atualizar Listagem
+          Update Listing
         </Button>
       </Box>
+
+      {/* Snackbar para exibir mensagens de erro */}
+      <Snackbar
+        open={errorOpen}
+        autoHideDuration={3000}
+        onClose={() => setErrorOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setErrorOpen(false)}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Snackbar para mensagem de sucesso */}
+      <Snackbar
+        open={successOpen}
+        autoHideDuration={3000}
+        onClose={() => setSuccessOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSuccessOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Successfully updated!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../helpers/auth-context.jsx";
 import { create } from "../../frontend-ctrl/api-listing.js";
 import { list } from "../../frontend-ctrl/api-category.js";
+import { useNavigate } from "react-router-dom";
 import {
     TextField,
     Button,
@@ -11,12 +12,18 @@ import {
     Typography,
     InputLabel,
     FormControl,
+    Snackbar,
+    Alert
 } from "@mui/material";
 
 const NewListing = () => {
     const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
 
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [successOpen, setSuccessOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -36,7 +43,7 @@ const NewListing = () => {
         price: "",
         category: "",
         images: [],
-        imageFile: null, // New state for image file
+        imageFile: null, 
         location: {
             address: "",
             city: "",
@@ -65,7 +72,20 @@ const NewListing = () => {
         event.preventDefault();
 
         if (isAuthenticated) {
-            if (!listing.title || !listing.description || !listing.price || !listing.category || !listing.condition) {
+            
+            if (
+                !listing.title ||
+                !listing.description ||
+                !listing.price ||
+                !listing.category ||
+                !listing.condition ||
+                !listing.location.address ||
+                !listing.location.city ||
+                !listing.location.province ||
+                !listing.location.postalCode
+            ) {
+                setErrorMessage("Please fill in all required fields before submitting the listing.");
+                setErrorOpen(true);
                 return;
             }
 
@@ -77,7 +97,7 @@ const NewListing = () => {
                             formData.append(`location[${locKey}]`, locValue)
                         );
                     } else if (key === "imageFile") {
-                        formData.append("image", value); // Add the image file
+                        formData.append("image", value);
                     } else {
                         formData.append(key, value);
                     }
@@ -85,10 +105,19 @@ const NewListing = () => {
 
                 console.log("FormData object:", formData);
 
-                const response = await create(formData); // Send FormData
+                const response = await create(formData);
                 console.log("Listing created:", response);
+
+                setSuccessOpen(true); 
+
+              
+                setTimeout(() => {
+                    navigate("/");
+                }, 1500);
             } catch (err) {
                 console.error("Error creating listing:", err);
+                setErrorMessage("There was an error creating the listing. Please try again.");
+                setErrorOpen(true);
             }
         } else {
             console.log("User not authenticated");
@@ -121,7 +150,6 @@ const NewListing = () => {
                         onChange={handleChange("title")}
                         required
                     />
-
                     {/* Description */}
                     <TextField
                         label="Description"
@@ -134,7 +162,6 @@ const NewListing = () => {
                         onChange={handleChange("description")}
                         required
                     />
-
                     {/* Price */}
                     <TextField
                         label="Price"
@@ -146,7 +173,6 @@ const NewListing = () => {
                         onChange={handleChange("price")}
                         required
                     />
-
                     {/* Category */}
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="category-label">Category</InputLabel>
@@ -166,7 +192,6 @@ const NewListing = () => {
                             ))}
                         </Select>
                     </FormControl>
-
                     {/* Location */}
                     <TextField
                         label="Address"
@@ -177,7 +202,6 @@ const NewListing = () => {
                         onChange={handleChange("address")}
                         required
                     />
-
                     <TextField
                         label="City"
                         variant="outlined"
@@ -187,7 +211,6 @@ const NewListing = () => {
                         onChange={handleChange("city")}
                         required
                     />
-
                     <TextField
                         label="Province"
                         variant="outlined"
@@ -197,7 +220,6 @@ const NewListing = () => {
                         onChange={handleChange("province")}
                         required
                     />
-
                     <TextField
                         label="Postal Code"
                         variant="outlined"
@@ -207,7 +229,6 @@ const NewListing = () => {
                         onChange={handleChange("postalCode")}
                         required
                     />
-
                     {/* Condition */}
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="condition-label">Condition</InputLabel>
@@ -224,7 +245,6 @@ const NewListing = () => {
                             <MenuItem value="Used">Used</MenuItem>
                         </Select>
                     </FormControl>
-
                     {/* Submit Button */}
                     <Button
                         type="submit"
@@ -241,7 +261,40 @@ const NewListing = () => {
                     You must be logged in to create a listing.
                 </Typography>
             )}
-            {/* Dialogs */}
+
+            {/* Snackbar para Erro */}
+            <Snackbar
+                open={errorOpen}
+                autoHideDuration={3000}
+                onClose={() => setErrorOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert
+                    onClose={() => setErrorOpen(false)}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+
+            {/* Snackbar para Sucesso */}
+            <Snackbar
+                open={successOpen}
+                autoHideDuration={3000}
+                onClose={() => setSuccessOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert
+                    onClose={() => setSuccessOpen(false)}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Listing added successfully!
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

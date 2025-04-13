@@ -17,6 +17,7 @@ import {
 import { useAuth } from "../../helpers/auth-context";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import { useCart } from "../../helpers/CartContext.jsx";
+import config from '../../config.js';
 
 const Cart = () => {
   const { isAuthenticated } = useAuth();
@@ -31,17 +32,17 @@ const Cart = () => {
 
   const shipping = 5;
 
-  // Subtotal é a soma dos itens (preço * quantidade)
+  // Subtotal is the sum of all items (price * quantity)
   const getSubtotal = () =>
     cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  // Calcula os 13% do subtotal
+  // Calculates 13% tax on the subtotal
   const getTax = () => getSubtotal() * 0.13;
 
   // Total = subtotal + shipping + taxes
   const getTotalPrice = () => getSubtotal() + shipping + getTax();
 
-  // Quantidade total de itens
+  // Total quantity of items
   const getTotalItems = () =>
     cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -58,14 +59,14 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    emptyCart(); // Limpa o carrinho
-    setShowAlert(true); // Exibe o alerta
+    emptyCart(); // Clears the cart
+    setShowAlert(true); // Shows the alert
   };
 
   const handleAlertDismiss = () => {
     setShowAlert(false);
     setTimeout(() => {
-      window.location.reload(); // Recarrega a página
+      window.location.reload(); // Reloads the page
     }, 300);
   };
 
@@ -87,10 +88,10 @@ const Cart = () => {
         margin: "0 auto",
         padding: "2rem",
         maxWidth: "1200px",
-        minHeight: "80vh" // Adicionado para empurrar o footer para baixo
+        minHeight: "80vh" // Added to push the footer down
       }}
     >
-      {/* Modal de Alerta de Compra Completa */}
+      {/* Purchase Complete Alert Modal */}
       {showAlert && (
         <Dialog
           open={showAlert}
@@ -112,7 +113,7 @@ const Cart = () => {
         </Dialog>
       )}
 
-      {/* Título Principal */}
+      {/* Main Title */}
       <Typography
         variant="h4"
         gutterBottom
@@ -123,9 +124,9 @@ const Cart = () => {
         Your Cart
       </Typography>
 
-      {/* GRID para separar a coluna de itens e a coluna de resumo */}
+      {/* GRID to separate the items column and the summary column */}
       <Grid container spacing={3}>
-        {/* Coluna ESQUERDA: Lista de Produtos */}
+        {/* LEFT Column: Product List */}
         <Grid item xs={12} md={8}>
           {cartItems.length > 0 &&
             cartItems.map((item) => (
@@ -149,7 +150,7 @@ const Cart = () => {
                   <Grid item xs={12} sm={3}>
                     <Box sx={{ textAlign: "center" }}>
                       <img
-                        src={item.images[0]}
+                        src={`${config.IMAGE_BASE_URL}/${item.images[0]}`}
                         alt={item.name}
                         style={{
                           width: "100%",
@@ -211,7 +212,7 @@ const Cart = () => {
             ))}
         </Grid>
 
-        {/* Coluna DIREITA: Resumo do Pedido */}
+        {/* RIGHT Column: Order Summary */}
         <Grid item xs={12} md={4}>
           <Paper
             sx={{
@@ -261,7 +262,7 @@ const Cart = () => {
                 mb: 1
               }}
             >
-              <Typography variant="body1">Taxes(13%)</Typography>
+              <Typography variant="body1">Taxes (13%)</Typography>
               <Typography variant="body1">
                 ${cartItems.length > 0 ? getTax().toFixed(2) : "0.00"}
               </Typography>

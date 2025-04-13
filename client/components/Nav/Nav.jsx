@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../helpers/auth-context';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../helpers/auth-context";
 import {
   AppBar,
   Toolbar,
@@ -13,29 +13,28 @@ import {
   Snackbar,
   Alert,
   Box,
-} from '@mui/material';
-import { NavLink } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
-import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
-import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
-import AddIcon from '@mui/icons-material/Add';
-import logo from '../../assets/SOUTHMARKET.png';
-import './Nav.css';
-import './Nav.module.css';
+} from "@mui/material";
+import { NavLink } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import AccountCircleTwoToneIcon from "@mui/icons-material/AccountCircleTwoTone";
+import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
+import ShoppingCartTwoToneIcon from "@mui/icons-material/ShoppingCartTwoTone";
+import AddIcon from "@mui/icons-material/Add";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-
+import logo from "../../assets/SOUTHMARKET.png";
+import "./Nav.css";
+import "./Nav.module.css";
 
 const Nav = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleLogout = () => {
     logout(() => {
       setSnackbarOpen(true);
-      navigate('/signin');
+      navigate("/signin");
     });
   };
 
@@ -43,20 +42,25 @@ const Nav = () => {
     setSnackbarOpen(false);
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/?query=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery(""); // Limpa o campo de busca após a navegação
+    }
+  };
+
   return (
     <>
       <AppBar position="static" className="navbar">
         <Toolbar className="nav">
-        <img 
-  src={logo} 
-  alt="Logo" 
-  className="logo" 
-  onClick={() => navigate('/')} 
-  style={{ cursor: 'pointer' }} 
-/>
-          <Typography variant="h4" className="name">
-            
-          </Typography>
+          <img
+            src={logo}
+            alt="Logo"
+            className="logo"
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+          />
+          <Typography variant="h4" className="name"></Typography>
           <Button
             color="inherit"
             component={NavLink}
@@ -85,18 +89,30 @@ const Nav = () => {
             Contact
           </Button>
           <div className="search">
-            <div className="searchIcon">
-              <SearchIcon />
-            </div>
             <InputBase
               placeholder="What are you looking for?"
               className="inputBase"
-              inputProps={{ 'aria-label': 'search' }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch(); // Agora redireciona corretamente
+              }}
+              inputProps={{ "aria-label": "search" }}
             />
+            <IconButton onClick={handleSearch} className="searchButton">
+              <SearchIcon />
+            </IconButton>
           </div>
 
           {/* Área à direita para Sign Up/Sign In ou Sign Out */}
-          <Box sx={{ marginLeft: 'auto', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Box
+            sx={{
+              marginLeft: "auto",
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+            }}
+          >
             {isAuthenticated ? (
               <Button color="inherit" onClick={handleLogout} className="navLink">
                 Sign Out
@@ -127,84 +143,49 @@ const Nav = () => {
 
           {isAuthenticated && (
             <>
-              <Tooltip
-                title="Profile"
-                arrow
-                slots={{ transition: Zoom }}
-                slotProps={{
-                  popper: { modifiers: [{ name: 'offset', options: { offset: [0, -14] } }] },
-                }}
-              >
-                <IconButton color="inherit" component={NavLink} to="/profile" className="iconButton profile">
+              <Tooltip title="Profile" arrow>
+                <IconButton
+                  color="inherit"
+                  component={NavLink}
+                  to="/profile"
+                  className="iconButton profile"
+                >
                   <AccountCircleTwoToneIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip
-                title="Favorites"
-                arrow
-                slots={{ transition: Zoom }}
-                slotProps={{
-                  popper: { modifiers: [{ name: 'offset', options: { offset: [0, -14] } }] },
-                }}
-              >
-                <IconButton color="inherit" component={NavLink} to="/favourites" className="iconButton favourites">
+              <Tooltip title="Favorites" arrow>
+                <IconButton
+                  color="inherit"
+                  component={NavLink}
+                  to="/favourites"
+                  className="iconButton favourites"
+                >
                   <FavoriteTwoToneIcon />
                 </IconButton>
               </Tooltip>
-              {/* Botão Add Listing sem fundo azul */}
               <Tooltip title="Add Listing" arrow>
-  <IconButton
-    onClick={() => navigate("/newListing")}
-    disableRipple
-    className="iconButton addListing"
-    sx={{
-      backgroundColor: 'transparent',
-      '&:hover': {
-        backgroundColor: 'transparent',
-      },
-      '&:focus': {
-        backgroundColor: 'transparent',
-      },
-      '&:active': {
-        backgroundColor: 'transparent',
-      },
-    }}
-  >
-    <AddIcon sx={{ color: 'white' }} /> {/* ou 'black' dependendo do seu tema */}
-  </IconButton>
-</Tooltip>
-<Tooltip title="My Listing" arrow>
-  <IconButton
-    onClick={() => navigate("/myListings")}
-    disableRipple
-    className="iconButton addListing"
-    sx={{
-      backgroundColor: 'transparent',
-      '&:hover': {
-        backgroundColor: 'transparent',
-      },
-      '&:focus': {
-        backgroundColor: 'transparent',
-      },
-      '&:active': {
-        backgroundColor: 'transparent',
-      },
-    }}
-  >
-    <VisibilityIcon sx={{ color: 'white' }} /> {/* ou 'black' dependendo do seu tema */}
-  </IconButton>
-</Tooltip>
-
-
-              <Tooltip
-                title="Cart"
-                arrow
-                slots={{ transition: Zoom }}
-                slotProps={{
-                  popper: { modifiers: [{ name: 'offset', options: { offset: [0, -14] } }] },
-                }}
-              >
-                <IconButton color="inherit" component={NavLink} to="/cart" className="iconButton cart">
+                <IconButton
+                  onClick={() => navigate("/newListing")}
+                  className="iconButton addListing"
+                >
+                  <AddIcon sx={{ color: "white" }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="My Listing" arrow>
+                <IconButton
+                  onClick={() => navigate("/myListings")}
+                  className="iconButton addListing"
+                >
+                  <VisibilityIcon sx={{ color: "white" }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Cart" arrow>
+                <IconButton
+                  color="inherit"
+                  component={NavLink}
+                  to="/cart"
+                  className="iconButton cart"
+                >
                   <ShoppingCartTwoToneIcon />
                 </IconButton>
               </Tooltip>
@@ -217,9 +198,13 @@ const Nav = () => {
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           Goodbye!
         </Alert>
       </Snackbar>
