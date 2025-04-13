@@ -11,6 +11,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { useAuth } from "../../helpers/auth-context.jsx";
 
@@ -33,16 +35,19 @@ const EditListing = () => {
   });
 
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
 
+ 
   useEffect(() => {
     if (!listingId) return;
     const ac = new AbortController();
     read({ listingId }, {}, ac.signal)
       .then((data) => {
         if (data.error) {
-          setError(data.error);
+          setErrorMessage(data.error);
+          setErrorOpen(true);
         } else {
           setListing({
             title: data.title || "",
@@ -66,17 +71,30 @@ const EditListing = () => {
           });
         }
       })
-      .catch((err) => console.error("Error reading listing:", err));
+      .catch((err) => {
+        console.error("Error reading listing:", err);
+        setErrorMessage("Error reading listing data.");
+        setErrorOpen(true);
+      });
     return () => ac.abort();
   }, [listingId, isAuthenticated]);
+
 
   useEffect(() => {
     listCategories()
       .then((data) => {
-        if (data.error) setError(data.error);
-        else setCategories(data);
+        if (data.error) {
+          setErrorMessage(data.error);
+          setErrorOpen(true);
+        } else {
+          setCategories(data);
+        }
       })
-      .catch((err) => console.error("Error fetching categories:", err));
+      .catch((err) => {
+        console.error("Error fetching categories:", err);
+        setErrorMessage("Error fetching categories.");
+        setErrorOpen(true);
+      });
   }, []);
 
   const handleChange = (name) => (event) => {
@@ -94,12 +112,31 @@ const EditListing = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
+    setErrorMessage("");
 
     if (!isAuthenticated) {
-      setError("User not authenticated.");
+      setErrorMessage("User not authenticated.");
+      setErrorOpen(true);
       return;
     }
+
+    
+    if (
+      !listing.title ||
+      !listing.description ||
+      !listing.price ||
+      !listing.category ||
+      !listing.condition ||
+      !listing.location.address ||
+      !listing.location.city ||
+      !listing.location.province ||
+      !listing.location.postalCode
+    ) {
+      setErrorMessage("Please fill in all required fields before submitting the listing.");
+      setErrorOpen(true);
+      return;
+    }
+
     const { user, token } = isAuthenticated;
     let listingToSend;
 
@@ -139,14 +176,18 @@ const EditListing = () => {
     try {
       const data = await update({ listingId }, { t: token }, listingToSend);
       if (data.error) {
-        setError(data.error);
+        setErrorMessage(data.error);
+        setErrorOpen(true);
       } else {
-        setSuccess(true);
-        setTimeout(() => navigate("/myListings"), 1000);
+        setSuccessOpen(true);
+        setTimeout(() => {
+          navigate("/myListings");
+        }, 1000);
       }
     } catch (err) {
       console.error("UPDATE error:", err);
-      setError("An error occurred while updating the listing.");
+      setErrorMessage("An error occurred while updating the listing.");
+      setErrorOpen(true);
     }
   };
 
@@ -155,10 +196,7 @@ const EditListing = () => {
       <Typography variant="h4" gutterBottom>
         Edit Listing
       </Typography>
-      {error && <Typography color="error">{error}</Typography>}
-      {success && (
-        <Typography color="primary">Successfully updated!</Typography>
-      )}
+
       <Box component="form" onSubmit={handleSubmit} noValidate>
         {listing.image && listing.image.length > 0 && (
           <Box sx={{ my: 2 }}>
@@ -175,6 +213,7 @@ const EditListing = () => {
             />
           </Box>
         )}
+
         <TextField
           type="file"
           fullWidth
@@ -291,6 +330,40 @@ const EditListing = () => {
           Update Listing
         </Button>
       </Box>
+
+      {/* Snackbar para exibir mensagens de erro */}
+      <Snackbar
+        open={errorOpen}
+        autoHideDuration={3000}
+        onClose={() => setErrorOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setErrorOpen(false)}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Snackbar para mensagem de sucesso */}
+      <Snackbar
+        open={successOpen}
+        autoHideDuration={3000}
+        onClose={() => setSuccessOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSuccessOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Successfully updated!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

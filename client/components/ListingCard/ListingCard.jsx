@@ -16,6 +16,12 @@ import {
   Tooltip,
   Snackbar,
   Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -31,20 +37,20 @@ const ListingCard = ({ listing }) => {
   const { addToFavourites } = useFavourites();
   const location = useLocation();
 
-  const [isOpen, setIsOpen] = useState(false); // Modal state
+  const [isOpen, setIsOpen] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Default severity is success
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [confirmOpen, setConfirmOpen] = useState(false); // Confirm delete dialog
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
-    setShowButtons(!isOpen); // Toggle visibility of buttons when modal toggles
+    setShowButtons(!isOpen);
   };
 
-  // const showPublicButtons = location.pathname === "/"; // Public buttons
   const showPublicButtons = location.pathname === "/" && !isOpen;
-  const showPrivateButtons = location.pathname === "/myListings"; // Private buttons
+  const showPrivateButtons = location.pathname === "/myListings";
 
   if (!listing.postedBy) return <></>;
 
@@ -82,246 +88,247 @@ const ListingCard = ({ listing }) => {
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
-      // Reload the webpage after the process
       window.location.reload();
     }
   };
-
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
 
   return (
-      <>
-        <Card className="listing-card" onClick={toggleModal}>
-          {/* Display image if it exists */}
-          {listing.images && listing.images.length > 0 && (
-              <CardMedia
-                  component="img"
-                  height="140"
-                  image={`${config.IMAGE_BASE_URL}/${listing.images[0]}`} // Display the first image in the array
-                  alt={listing.title || "Listing image"}
-                  className="listing-image"
-              />
+    <>
+      <Card className="listing-card" onClick={toggleModal}>
+        {listing.images && listing.images.length > 0 && (
+          <CardMedia
+            component="img"
+            height="140"
+            image={`${config.IMAGE_BASE_URL}/${listing.images[0]}`}
+            alt={listing.title || "Listing image"}
+            className="listing-image"
+          />
+        )}
+        <CardContent className="card">
+          {listing.title && (
+            <Typography variant="h6" className="listing-title">
+              {listing.title}
+            </Typography>
           )}
-          <CardContent className="card">
-            {listing.title && (
-                <Typography variant="h6" className="listing-title">
-                  {listing.title}
-                </Typography>
-            )}
-            {listing.description && (
-                <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    className="listing-description"
-                >
-                  {listing.description}
-                </Typography>
-            )}
-            {listing.condition && (
-                <Typography variant="body2" color="textSecondary" className="listing-condition">
-                  Condition: {listing.condition}
-                </Typography>
-            )}
-            {listing.status && (
-                <Typography variant="body2" color="textSecondary" className="listing-status">
-                  Status: {listing.status}
-                </Typography>
-            )}
-            {listing.postedBy?.name && (
-                <Typography variant="body2" color="textSecondary" className="listing-posted-by">
-                  Posted by:{" "}
-                  {listing.postedBy.name
-                      .toLowerCase()
-                      .split(" ")
-                      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                      .join(" ")}
-                </Typography>
-            )}
-            {listing.price && (
-                <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    className="listing-price"
-                >
-                  ${listing.price}
-                </Typography>
-            )}
+          {listing.description && (
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              className="listing-description"
+            >
+              {listing.description}
+            </Typography>
+          )}
+          {listing.condition && (
+            <Typography variant="body2" color="textSecondary" className="listing-condition">
+              Condition: {listing.condition}
+            </Typography>
+          )}
+          {listing.status && (
+            <Typography variant="body2" color="textSecondary" className="listing-status">
+              Status: {listing.status}
+            </Typography>
+          )}
+          {listing.postedBy?.name && (
+            <Typography variant="body2" color="textSecondary" className="listing-posted-by">
+              Posted by:{" "}
+              {listing.postedBy.name
+                .toLowerCase()
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")}
+            </Typography>
+          )}
+          {listing.price && (
+            <Typography variant="body1" color="textPrimary" className="listing-price">
+              ${listing.price}
+            </Typography>
+          )}
 
-            {/* Public buttons */}
-            {isAuthenticated && showPublicButtons && showButtons && (
-                <Box className="fab-container">
-                 <Tooltip title="Add to Cart" arrow>
-                    <Fab
-                      color="primary"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation(); 
-                        handleAddToCart();
-                      }}
-                      aria-label="Add to Cart"
-                      sx={{ marginRight: 1 }}
-                    >
-                      <AddShoppingCartIcon />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Add to Favorites" arrow>
-                        <Fab
-                          color="secondary"
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation(); 
-                            handleAddToFavourites();
-                          }}
-                          aria-label="Add to Favorites"
-                        >
-                          <FavoriteIcon />
-                        </Fab>
-                      </Tooltip>
+          {/* Public Buttons */}
+          {isAuthenticated && showPublicButtons && showButtons && (
+            <Box className="fab-container">
+              <Tooltip title="Add to Cart" arrow>
+                <Fab
+                  color="primary"
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart();
+                  }}
+                  aria-label="Add to Cart"
+                  sx={{ marginRight: 1 }}
+                >
+                  <AddShoppingCartIcon />
+                </Fab>
+              </Tooltip>
+              <Tooltip title="Add to Favorites" arrow>
+                <Fab
+                  color="secondary"
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToFavourites();
+                  }}
+                  aria-label="Add to Favorites"
+                >
+                  <FavoriteIcon />
+                </Fab>
+              </Tooltip>
+            </Box>
+          )}
 
-                </Box>
-            )}
-          
-            {/* Private buttons */}
-            {isAuthenticated && showPrivateButtons && (
-                <Box className="fab-container">
-                  <Tooltip title="Edit Listing" arrow>
-                    <Fab
-                        color="primary"
-                        size="small"
-                        onClick={() => navigate(`/listings/edit/${listing._id}`)}
-                        aria-label="Edit Listing"
-                        sx={{ marginRight: 2 }}
-                    >
-                      <EditIcon />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Delete Listing" arrow>
-                    <Fab
+          {/* Private Buttons */}
+          {isAuthenticated && showPrivateButtons && (
+            <Box className="fab-container">
+              <Tooltip title="Edit Listing" arrow>
+                <Fab
+                  color="primary"
+                  size="small"
+                  onClick={() => navigate(`/listings/edit/${listing._id}`)}
+                  aria-label="Edit Listing"
+                  sx={{ marginRight: 2 }}
+                >
+                  <EditIcon />
+                </Fab>
+              </Tooltip>
+              <Tooltip title="Delete Listing" arrow>
+                      <Fab
                         color="secondary"
                         size="small"
-                        onClick={() =>
-                            handleRemoveListing(listing._id, isAuthenticated.token)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmOpen(true);
+                        }}
                         aria-label="Delete Listing"
-                    >
-                      <DeleteIcon />
-                    </Fab>
-                  </Tooltip>
-                </Box>
+                      >
+                        <DeleteIcon />
+                      </Fab>
+                    </Tooltip>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Modal */}
+      {isOpen && (
+        <div className="modal-overlay" onClick={() => setIsOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            {listing.images && listing.images.length > 0 && (
+              <img
+                src={`${config.IMAGE_BASE_URL}/${listing.images[0]}`}
+                alt={listing.title}
+                className="modal-image"
+              />
             )}
-          </CardContent>
-        </Card>
-
-        {/* Modal for expanded view */}
-        {isOpen && (
-            <div className="modal-overlay" onClick={() => setIsOpen(false)}>
-              <div
-                  className="modal-content"
-                  onClick={(e) => e.stopPropagation()} // Prevent closing on inner content click
-              >
-                {listing.images && listing.images.length > 0 && (
-                    <img
-                        src={`${config.IMAGE_BASE_URL}/${listing.images[0]}`}
-                        alt={listing.title}
-                        className="modal-image"
-                    />
-                )}
-                <Typography variant="h6" className="listing-title">
-                  {listing.title}
-                </Typography>
-                <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    className="listing-description"
+            <Typography variant="h6" className="listing-title">
+              {listing.title}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" className="listing-description">
+              {listing.description}
+            </Typography>
+            {listing.condition && (
+              <Typography variant="body2" color="textSecondary" className="listing-condition">
+                Condition: {listing.condition}
+              </Typography>
+            )}
+            {listing.status && (
+              <Typography variant="body2" color="textSecondary" className="listing-status">
+                Status: {listing.status}
+              </Typography>
+            )}
+            {listing.postedBy?.name && (
+              <Typography variant="body2" color="textSecondary" className="listing-posted-by">
+                Posted by:{" "}
+                {listing.postedBy.name
+                  .toLowerCase()
+                  .split(" ")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" ")}
+              </Typography>
+            )}
+            {listing.price && (
+              <Typography variant="body1" color="textPrimary" className="listing-price">
+                ${listing.price}
+              </Typography>
+            )}
+            <div className="modal-buttons">
+              <Tooltip title="Add to Cart" arrow>
+                <Fab
+                  color="primary"
+                  size="small"
+                  onClick={handleAddToCart}
+                  aria-label="Add to Cart"
+                  sx={{ marginRight: 1 }}
                 >
-                  {listing.description}
-                </Typography>
-                {listing.condition && (
-                    <Typography variant="body2" color="textSecondary" className="listing-condition">
-                      Condition: {listing.condition}
-                    </Typography>
-                )}
-                {listing.status && (
-                    <Typography variant="body2" color="textSecondary" className="listing-status">
-                      Status: {listing.status}
-                    </Typography>
-                )}
-                {listing.postedBy?.name && (
-                    <Typography variant="body2" color="textSecondary" className="listing-posted-by">
-                      Posted by:{" "}
-                      {listing.postedBy.name
-                          .toLowerCase()
-                          .split(" ")
-                          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                          .join(" ")}
-                    </Typography>
-                )}
-                {listing.price && (
-                    <Typography
-                        variant="body1"
-                        color="textPrimary"
-                        className="listing-price"
-                    >
-                      ${listing.price}
-                    </Typography>
-                )}
-
-                {/* Buttons for "Add to Cart" and "Add to Favorites" - Render only in modal */}
-                {isOpen && (
-                    <div className="modal-buttons">
-                      <Tooltip title="Add to Cart" arrow>
-                        <Fab
-                            color="primary"
-                            size="small"
-                            onClick={handleAddToCart}
-                            aria-label="Add to Cart"
-                            sx={{ marginRight: 1 }}
-                        >
-                          <AddShoppingCartIcon />
-                        </Fab>
-                      </Tooltip>
-                      <Tooltip title="Add to Favorites" arrow>
-                        <Fab
-                            color="secondary"
-                            size="small"
-                            onClick={handleAddToFavourites}
-                            aria-label="Add to Favorites"
-                        >
-                          <FavoriteIcon />
-                        </Fab>
-                      </Tooltip>
-                    </div>
-                )}
-
-                <button
-                    className="close-button"
-                    onClick={() => setIsOpen(false)}
+                  <AddShoppingCartIcon />
+                </Fab>
+              </Tooltip>
+              <Tooltip title="Add to Favorites" arrow>
+                <Fab
+                  color="secondary"
+                  size="small"
+                  onClick={handleAddToFavourites}
+                  aria-label="Add to Favorites"
                 >
-                  Close
-                </button>
-              </div>
+                  <FavoriteIcon />
+                </Fab>
+              </Tooltip>
             </div>
-        )}
+            <button className="close-button" onClick={() => setIsOpen(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
-        {/* Snackbar Component */}
-        <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={3000}
-            onClose={handleSnackbarClose}
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert
-              onClose={handleSnackbarClose}
-              severity={snackbarSeverity}
-              sx={{ width: "100%" }}
+      {/* Confirm Delete Dialog */}
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        aria-labelledby="confirm-delete-title"
+        aria-describedby="confirm-delete-description"
+      >
+        <DialogTitle id="confirm-delete-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-delete-description">
+            Are you sure you want to delete the listing "<strong>{listing.title}</strong>"?
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              setConfirmOpen(false);
+              handleRemoveListing(listing._id, isAuthenticated.token);
+            }}
+            color="error"
+            autoFocus
           >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
